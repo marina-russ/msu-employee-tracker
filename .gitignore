@@ -3,6 +3,9 @@
 /tmp
 /out-tsc
 
+#notes
+notes.md
+
 # Runtime data
 pids
 *.pid

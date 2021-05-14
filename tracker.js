@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
-require('console.table');
+const dotenv = require('dotenv');
+const consoleTable = require('console.table');
 
 // ** ========================================= ** //
 // ** ===============CONNECTION================ ** //
@@ -9,11 +10,9 @@ require('console.table');
 const connection = mysql.createConnection({
   host: 'localhost',
   port: 3306,
-  user: 'root',
-  // TODO! Enter your MySQL password.
-  password: 'dolphin',
-  database: 'employeeTracker_db',
-  /* NOTE: password is a throw-away password, normally this would be hidden inside a dotenv file for security */
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 connection.connect((err) => {
@@ -84,7 +83,8 @@ const getEmployees = function () {
   connection.query('SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, " " , e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;',)
   function (err, res) {
     if (err) throw err
-    console.table(res)
+    console.log('\n', 'You are now viewing all employees.');
+    console.table('\n', res);
     init();
   }
 };
@@ -94,7 +94,8 @@ const viewRoles = function () {
   connection.query('SELECT employee.first_name, employee.last_name, role.title AS Title FROM employee JOIN role ON employee.role_id = role.id;',
     function (err, res) {
       if (err) throw err
-      console.table(res)
+      console.log('\n', 'You are now viewing all rolls.');
+      console.table('\n', res);
       init();
     })
   };
@@ -104,7 +105,8 @@ const viewDepartments = function () {
   connection.query('SELECT employee.first_name, employee.last_name, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY employee.id;',
     function (err, res) {
       if (err) throw err
-      console.table(res)
+      console.log('\n', 'You are now viewing all departments.');
+      console.table('\n', res);
       init();
     })
 };

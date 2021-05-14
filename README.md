@@ -17,4 +17,4 @@ Then prompts will appear for you to interact with the database.
 
 ## App Demo
 
-![App Demo](tracker-app.gif)
+![App Demo](assets/tracker-app.gif)

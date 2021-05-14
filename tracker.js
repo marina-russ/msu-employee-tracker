@@ -1,6 +1,6 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const inquirer = require('inquirer');
-const dotenv = require('dotenv');
+require("dotenv").config();
 const consoleTable = require('console.table');
 
 // ** ========================================= ** //
@@ -80,14 +80,20 @@ function exit() {
 
 // Gets all employees
 const getEmployees = function () {
-  connection.query('SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, " " , e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;',)
-  function (err, res) {
+  connection.query('SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, " " , e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;', function (err, res) {
     if (err) throw err
     console.log('\n', 'You are now viewing all employees.');
     console.table('\n', res);
     init();
-  }
+  })
+  // function (err, res) {
+  //   if (err) throw err
+  //   console.log('\n', 'You are now viewing all employees.');
+  //   console.table('\n', res);
+  //   init();
+  // }
 };
+
 
 // Gets all roles
 const viewRoles = function () {
@@ -98,7 +104,7 @@ const viewRoles = function () {
       console.table('\n', res);
       init();
     })
-  };
+};
 
 // Gets all departments
 const viewDepartments = function () {

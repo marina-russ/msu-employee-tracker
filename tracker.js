@@ -79,8 +79,8 @@ function exit() {
 // ** ========== GET ========== ** //
 
 // Gets all employees
-const getEmployees = function () {
-  connection.query('SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, " " , e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;', function (err, res) {
+const viewEmployees = function () {
+  connection.query('SELECT employee.first_name, employee.last_name, role.title, role.salary, department.dept_name, CONCAT(e.first_name, " " , e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;', function (err, res) {
     if (err) throw err
     console.log('\n', 'You are now viewing all employees.');
     console.table('\n', res);
@@ -97,10 +97,10 @@ const getEmployees = function () {
 
 // Gets all roles
 const viewRoles = function () {
-  connection.query('SELECT employee.first_name, employee.last_name, role.title AS Title FROM employee JOIN role ON employee.role_id = role.id;',
+  connection.query('SELECT role.title, role.salary, role.department_id, role.title AS Title FROM employee JOIN role ON employee.role_id = role.id;',
     function (err, res) {
       if (err) throw err
-      console.log('\n', 'You are now viewing all rolls.');
+      console.log('\n', 'You are now viewing all roles.');
       console.table('\n', res);
       init();
     })
@@ -141,10 +141,10 @@ const updateEmployeeRole = function () {
           name: 'roleSelect',
           message: 'What is the employee\'s new role?',
           type: 'list',
-          choices: getRoles()
+          choices: viewRoles()
         }
       ]).then(data => {
-        let roleId = getRoles().indexOf(data.roleSelect) + 1;
+        let roleId = viewRoles().indexOf(data.roleSelect) + 1;
         connection.query('UPDATE employee SET ? WHERE ?',
           [{
             role_id: roleId
@@ -180,10 +180,10 @@ const addEmployee = function () {
       name: 'role',
       message: 'What is the employee\'s role?',
       type: 'list',
-      choices: getRoles()
+      choices: viewRoles()
     }
   ]).then(data => {
-    let roleId = getRoles().indexOf(data.role) + 1;
+    let roleId = viewRoles().indexOf(data.role) + 1;
     connection.query('INSERT INTO employee SET ?',
       {
         first_name: data.firstName,
@@ -251,7 +251,7 @@ const addDepartment = function () {
 
 // function for providing list of roles for updateEmployeeRole
 let roles = [];
-const getRoles = function () {
+const listRoles = function () {
   connection.query('SELECT * FROM role;',
     function (err, res) {
       if (err) throw err
